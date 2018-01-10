@@ -7,3 +7,4 @@
 - EC2 is created based on SubnetID rather than Availability Zone,as this is the only way to create instance in non-default VPC.
 - Be sure to configure RDS MySQL SecurityGroup to allow inbound from Subnet of instance.
 - You must have up and running MySQL-RDS ,and have  its Endpoint URL ,username,password,DB Instance name.
+- This template uses Mappings to ImageID and InstanceID based on your current Region.
