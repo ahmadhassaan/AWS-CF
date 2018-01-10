@@ -1,4 +1,5 @@
-
+# template link: https://github.com/ahmadhassaan/AWS-CF/blob/master/EC2-for-RDS-MySQL/EC2-for-RDS-MySQL.yaml
+# written by Ahmadhassaan@gmail.com
 Mappings:
   # The latest Amazon Linux AMI 2017.09.1 was released on 2017-11-22.
   # https://aws.amazon.com/amazon-linux-ami/
