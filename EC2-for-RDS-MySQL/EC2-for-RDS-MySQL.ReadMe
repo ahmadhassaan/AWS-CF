@@ -1,0 +1,9 @@
+ - Template to create an EC2 instance, and security group ( it allows both ssh and web from public)
+ -  The template has (UserData) metadata that will run script during EC2 initialization 
+     1- install/configure [apache, PHP, PHP-MySQL Native driver]
+     2- Add/configure db connection file (/var/www/inc/dbinfo.inc)
+     3- Add/configure (/var/www/html/index.php) that will create table of two columns (Name ,Address)
+- This template can work with default VPC and non-default VPC.
+- EC2 is created based on SubnetID rather than Availability Zone,as this is the only way to create instance in non-default VPC.
+- Be sure to configure RDS MySQL SecurityGroup to allow inbound from Subnet of instance.
+- You must have up and running MySQL-RDS ,and have  its Endpoint URL ,username,password,DB Instance name.
