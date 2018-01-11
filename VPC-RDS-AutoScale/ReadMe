@@ -1,0 +1,21 @@
+This Full stack templates will do the following :
+Frist File (1-vpc-stack.yaml)
+        1-  VPC 
+        2- Two Public Subnets.
+        3- Two Private Subnets.
+        4- Internet Gateway.
+        5- Two NAT Gateway,so each Private subnet can access internet.
+Second File (2-RDS-MySQL.yaml) :
+        1- To import values from previuos stack ( VPC ID and the two Private Subnet )
+        2- Create MySQL instance of type (db.t2.micro)
+        3- Make DB to run in only Private Subnets ( using AWS::RDS::DBSubnetGroup )
+        4- Allow only connection from any service/instance runs within Private Subnet (AWS::RDS::DBSecurityGroup)
+        5- Enable DB available in two zones.
+Third File (3-ASG-ApplicationLB - RDS.yaml) :
+      1- Create Bastion Host in first Public Subnet.
+      2- Create ALB ( Application Load Balancer) that is internet-facing.
+      3- AutoScale Group that launches instances within private subnet only and register them with Load Balancer.
+      4- a bash script to initialize EC2 instances by installing ( Apache ,PHP ,PHP Native Driver for MySQL).
+      5- Also ,bash script will configure DB connection to connect to previous stack ( RDS ).
+      6- create index.php (as sample) that will connect to MySQL and list/update one table.
+      7- Outputs to tell Load Balancer DNS name and Bastion Host Public IP
