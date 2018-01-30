@@ -1,0 +1,8 @@
+This template will create three resources :
+    1- EC2 instance
+    2- WaitCondition
+    3- WaitConditionHandle
+using (metadata) property of EC2 instance it will create two files
+   1- /tmp/a : contains json format file ,used to put data to the WaitConditionHandle
+   2- /tmp/callhandler.sh : script to use (curl) command to (PUT) data into signed URL ( WaitConditionHandle) ,
+   so the resource (WaitCondition) will be marked create_complete.
