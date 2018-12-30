@@ -1,0 +1,99 @@
+Rules:
+  SubnetsInVPCRule:
+    Assertions:
+     - Assert:
+        Fn::Not:
+        - Fn::Equals:
+          - !Ref Subnet1
+          - !Ref Subnet2
+       AssertDescription: Use Different Subnets
+
+
+Parameters:
+  MyInstanceType:
+    Type: String
+    Default: t2.micro
+    AllowedValues:
+      - t2.micro
+      - m1.small
+      - m1.large
+    Description: Enter t2.micro, m1.small, or m1.large. Default is t2.micro.
+  MyKey:
+    Description: Name of an existing EC2 KeyPair to enable SSH access to the instances. Linked to AWS Parameter
+    Type: AWS::EC2::KeyPair::KeyName
+    ConstraintDescription: must be the name of an existing EC2 KeyPair.
+  MyImage:
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
+    Default: '/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2'
+  Subnet1:
+    Type: AWS::EC2::Subnet::Id
+  Subnet2:
+    Type: AWS::EC2::Subnet::Id
+
+
+
+Resources:
+    MyEC2Instance1:
+      Type: "AWS::EC2::Instance"
+      Properties:
+        #we reference the InstanceType parameter
+        InstanceType: !Ref MyInstanceType
+        ImageId: !Ref MyImage
+        KeyName: !Ref MyKey
+        SubnetId: !Ref Subnet1
+        SecurityGroupIds:
+          - !GetAtt SSHSecurityGroup.GroupId
+        UserData:
+             Fn::Base64: !Sub |
+                 #!/bin/bash
+                 set -x ;
+                 exec > >(tee /var/log/user-data.log|logger -t user-data ) 2>&1 ;
+                 echo BEGIN ;
+                 date '+%Y-%m-%d %H:%M:%S' ;
+                 yum update -y aws-cfn-bootstrap ;
+                 yum install -y httpd ;
+                 echo "<html>11 I love YAML & Rules in CloudFormation 11</html>" > /var/www/html/index.html ;
+                 cd /var/www/html;
+                 chmod 755 index.html;
+                 service httpd start;
+                 chkconfig httpd on;
+                 touch /etc/done.now;
+    MyEC2Instance2:
+      Type: "AWS::EC2::Instance"
+      Properties:
+        #we reference the InstanceType parameter
+        InstanceType: !Ref MyInstanceType
+        ImageId: !Ref MyImage
+        KeyName: !Ref MyKey
+        SubnetId: !Ref Subnet2
+        SecurityGroupIds:
+          - !GetAtt SSHSecurityGroup.GroupId
+        UserData:
+             Fn::Base64: !Sub |
+                 #!/bin/bash
+                 set -x ;
+                 exec > >(tee /var/log/user-data.log|logger -t user-data ) 2>&1 ;
+                 echo BEGIN ;
+                 date '+%Y-%m-%d %H:%M:%S' ;
+                 yum update -y aws-cfn-bootstrap ;
+                 yum install -y httpd ;
+                 echo "<html>22 I love YAML & Rules in CloudFormation 22</html>" > /var/www/html/index.html ;
+                 cd /var/www/html;
+                 chmod 755 index.html;
+                 service httpd start;
+                 chkconfig httpd on;
+                 touch /etc/done.now;
+
+    SSHSecurityGroup:
+            Type: AWS::EC2::SecurityGroup
+            Properties:
+                GroupDescription: Enable SSH access via port 22
+                SecurityGroupIngress:
+                    -   CidrIp: 0.0.0.0/0
+                        FromPort: 22
+                        IpProtocol: tcp
+                        ToPort: 22
+                    -   CidrIp: 0.0.0.0/0
+                        FromPort: 80
+                        ToPort: 80
+                        IpProtocol: tcp
